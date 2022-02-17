@@ -1,0 +1,12 @@
+# =============== #
+# Unity generated #
+# =============== #
+Temp/
+Obj/
+Build/
+Library/
+*.unitypackage
+Logs/
+UserSettings/
+.vs/*
+.vsconfig
