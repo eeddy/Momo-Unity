@@ -9,6 +9,12 @@ public class MovementController : MonoBehaviour
     public Rigidbody2D rb;
     private Vector2 velocity;
 
+    private SoundManager soundManager; 
+
+    void Start() {
+        soundManager = FindObjectOfType<SoundManager>();
+    }
+
     void Update()
     {
         if (Input.GetKey(KeyCode.LeftArrow)) {
@@ -21,6 +27,7 @@ public class MovementController : MonoBehaviour
             rb.MovePosition(rb.position + velocity * Time.fixedDeltaTime);
         } else if (Input.GetKeyDown(KeyCode.Space)) {
             rb.AddForce(new Vector2(0,1) * upwardsForce);
+            soundManager.PlayJumpSound();
         }
     }
 }
