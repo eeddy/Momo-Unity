@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//Singleton
 public class SoundManager : MonoBehaviour
 {
-    //Singleton
     public static SoundManager instance;
-
+    
+    public AudioClip coin;
     public AudioClip jump;
+    public AudioClip loseLife;
     AudioSource audioSource;
 
     void Awake() {
@@ -21,5 +23,13 @@ public class SoundManager : MonoBehaviour
     
     public void PlayJumpSound() {
         audioSource.PlayOneShot(jump, 0.7F);
+    }
+
+    public void PlayCoinCollectedSound() {
+        audioSource.PlayOneShot(coin, 0.7f);
+    }
+    
+    public void PlayLoseLifeSound() {
+        audioSource.PlayOneShot(loseLife, 0.7f);
     }
 }

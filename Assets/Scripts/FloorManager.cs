@@ -18,7 +18,7 @@ public class FloorManager : MonoBehaviour
     private List<GameObject> rightFloors; 
     private List<GameObject> leftFloors;
     private List<GameObject> obstacles;
-    private List<GameObject> coins;
+    public List<GameObject> coins; //Public so it can be accessed from the game manager
 
     private float height, width;
     
@@ -59,6 +59,25 @@ public class FloorManager : MonoBehaviour
         DeleteFloors();
         DeleteObstacles();
         DeleteCoins();
+    }
+
+    //Called when the person dies
+    public void Reset() 
+    {
+        for(int i=0; i<coins.Count; i++) {
+            Destroy(coins[i].gameObject);
+        }
+        coins = new List<GameObject>();
+        for(int i=0; i<rightFloors.Count; i++) {
+            Destroy(rightFloors[i].gameObject);
+            Destroy(leftFloors[i].gameObject);
+        }
+        rightFloors = new List<GameObject>();
+        leftFloors = new List<GameObject>();
+        for(int i=0; i<obstacles.Count; i++) {
+            Destroy(obstacles[i].gameObject);
+        }
+        obstacles = new List<GameObject>();
     }
 
     void DeleteFloors() 
@@ -131,11 +150,12 @@ public class FloorManager : MonoBehaviour
     
         leftFloors.Add(floorLeft);
         rightFloors.Add(floorRight);
-        CreateObstacle(spriteHeight*heightScale, floorRight, floorLeft);
-        CreateCoin(spriteHeight*heightScale);
+        GameObject obs = CreateObstacle(spriteHeight*heightScale, floorRight, floorLeft);
+        CreateCoin(spriteHeight*heightScale,obs);
     }
 
-    public void CreateObstacle(float floorHeight, GameObject rightFloor, GameObject leftFloor) {
+    //Returns gameobject so we dont create coin overlapping it 
+    public GameObject CreateObstacle(float floorHeight, GameObject rightFloor, GameObject leftFloor) {
         float spriteWidth = obstacle.texture.width / obstacle.pixelsPerUnit;
         float spriteHeight = obstacle.texture.height / obstacle.pixelsPerUnit;
 
@@ -164,9 +184,10 @@ public class FloorManager : MonoBehaviour
         renderer.sprite = obstacle;
         obs.AddComponent<BoxCollider2D>();
         obstacles.Add(obs);
+        return obs;
     }
 
-    public void CreateCoin(float floorHeight) {
+    public void CreateCoin(float floorHeight, GameObject obs) {
         //One in 2 chance of coing being created
         int coinRandom = Random.Range(0,2);
         // Return if not 1
@@ -176,19 +197,24 @@ public class FloorManager : MonoBehaviour
         float spriteWidth = coin.texture.width / coin.pixelsPerUnit;
         float spriteHeight = coin.texture.height / coin.pixelsPerUnit;
 
-        GameObject obs = new GameObject("Coin");
-        obs.transform.localScale = new Vector3(1f, 1f);
+        GameObject coinObj = new GameObject("Coin");
+        coinObj.transform.localScale = new Vector3(1f, 1f);
 
-        //TODO: I need to do a check to make sure the coin isnt in the gap --> This may not be as important
         float location = Random.Range(0.5f,width/2-0.5f);
-        if(leftSide) {
-             obs.transform.position = new Vector3(-location,-height/2 + spriteHeight/2 + floorHeight);
+        if(leftSide) {  
+            while(obs.GetComponent<BoxCollider2D>().bounds.Contains(new Vector3(-location,-height/2 + spriteHeight/2 + floorHeight))) {
+                location = Random.Range(0.5f,width/2-0.5f);
+            }
+            coinObj.transform.position = new Vector3(-location,-height/2 + spriteHeight/2 + floorHeight);
         } else {
-             obs.transform.position = new Vector3(location,-height/2 + spriteHeight/2 + floorHeight);
+            while(obs.GetComponent<BoxCollider2D>().bounds.Contains(new Vector3(location,-height/2 + spriteHeight/2 + floorHeight))) {
+                location = Random.Range(0.5f,width/2-0.5f);
+            }
+            coinObj.transform.position = new Vector3(location,-height/2 + spriteHeight/2 + floorHeight);
         }
-        SpriteRenderer renderer = obs.AddComponent<SpriteRenderer>();
+        SpriteRenderer renderer = coinObj.AddComponent<SpriteRenderer>();
         renderer.sprite = coin;
-        coins.Add(obs);
+        coins.Add(coinObj);
     }
 
     //public void CheckOverlap() --> This would be awesome to add at some point.
