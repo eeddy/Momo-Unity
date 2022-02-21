@@ -6,17 +6,19 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public Image p1h1, p1h2, p1h3, p2h1, p2h2, p2h3; //Hearts
+    public Text p1Score, p2Score;
     public Sprite fullHeart;
     public Sprite emptyHeart;
     public FloorManager p1FloorManager, p2FloorManager;
 
     public GameObject momo1, momo2, p1Spikes, p2Spikes; 
 
+    private float previousTime = 0;
     private int player1Lives; 
     private int player2Lives; 
 
-    private int player1Coins;
-    private int player2Coins;
+    private int player1Score;
+    private int player2Score;
 
     private bool p1Touching, p2Touching;
 
@@ -29,8 +31,8 @@ public class GameManager : MonoBehaviour
         player1Lives = 3;
         player2Lives = 3; 
         //Set initial coins
-        player1Coins = 0;
-        player2Coins = 0;
+        player1Score = 0;
+        player2Score = 0;
         p1Touching = false;
         p2Touching = false;
         
@@ -40,6 +42,14 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        p1Score.text = player1Score + "";
+        p2Score.text = player2Score + "";
+        //Increase score every 5 seconds
+        if (Time.timeSinceLevelLoad - previousTime > 5) {
+            previousTime = Time.time;
+            player1Score+=5;
+            player2Score+=5;
+        }
         UpdateLives();
         CheckForCoinCollisisons();
         CheckForSpikeTouch();
@@ -71,7 +81,7 @@ public class GameManager : MonoBehaviour
         for(int i=0; i<p1FloorManager.coins.Count; i++) {
             if(momo1.GetComponent<BoxCollider2D>().bounds.Contains(p1FloorManager.coins[i].transform.position)) {
                 soundManager.PlayCoinCollectedSound();
-                player1Coins++;
+                player1Score+=5;
                 Destroy(p1FloorManager.coins[i].gameObject);
                 p1FloorManager.coins.RemoveAt(i);
             }
@@ -80,7 +90,7 @@ public class GameManager : MonoBehaviour
         for(int i=0; i<p2FloorManager.coins.Count; i++) {
             if(momo2.GetComponent<BoxCollider2D>().bounds.Contains(p2FloorManager.coins[i].transform.position)) {
                 soundManager.PlayCoinCollectedSound();
-                player2Coins++;
+                player2Score+=5;
                 Destroy(p2FloorManager.coins[i].gameObject);
                 p2FloorManager.coins.RemoveAt(i);
             }

@@ -23,6 +23,9 @@ public class FloorManager : MonoBehaviour
     private float height, width;
     
     private float floorSpeed = 0.5f;
+    private float floorIncrement = 0.1f;
+    private float previousTime = 0f;
+    private float previousFloorSpawn = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -36,13 +39,22 @@ public class FloorManager : MonoBehaviour
         leftFloors = new List<GameObject>();
         obstacles = new List<GameObject>();
         coins = new List<GameObject>();
-
-        InvokeRepeating("CreateFloor", 0f, 5f);
+        CreateFloor();
     }
 
     // Update is called once per frame
     void Update()
     {
+        //Spawing floors relative to speed
+        if (Time.timeSinceLevelLoad - previousFloorSpawn > 2.5f/floorSpeed){
+            CreateFloor();
+            previousFloorSpawn = Time.time;
+        }
+        //Increase speed every 10 seconds
+        if (Time.timeSinceLevelLoad - previousTime > 10) {
+            floorSpeed += floorIncrement;
+            previousTime = Time.time;
+        }
         //Update floors
         for(int i=0; i<rightFloors.Count; i++) {
             rightFloors[i].transform.position += new Vector3(0, floorSpeed * Time.deltaTime, 0);
@@ -64,6 +76,7 @@ public class FloorManager : MonoBehaviour
     //Called when the person dies
     public void Reset() 
     {
+        floorSpeed = 0.5f;
         for(int i=0; i<coins.Count; i++) {
             Destroy(coins[i].gameObject);
         }
