@@ -209,8 +209,27 @@ public class FloorManager : MonoBehaviour
         }
         float spriteWidth = coin.texture.width / coin.pixelsPerUnit;
         float spriteHeight = coin.texture.height / coin.pixelsPerUnit;
-
-        GameObject coinObj = new GameObject("Coin");
+        string coinType;
+        if(Random.RandomRange(0 , 10) > 0)
+        {
+            if(Random.RandomRange(0,5) > 2)
+            {
+                coinType = "LifeCoinP";
+                Debug.Log("LifeCoinPPP!");
+            }
+            else
+            {
+                coinType = "LifeCoinS";
+                Debug.Log("LifeCoinSSS!");
+            }
+            
+           
+        }
+        else
+        {
+            coinType = "Coin";
+        }
+        GameObject coinObj = new GameObject(coinType);
         coinObj.transform.localScale = new Vector3(1f, 1f);
 
         float location = Random.Range(0.5f,width/2-0.5f);
@@ -225,6 +244,7 @@ public class FloorManager : MonoBehaviour
             }
             coinObj.transform.position = new Vector3(location,-height/2 + spriteHeight/2 + floorHeight);
         }
+
         SpriteRenderer renderer = coinObj.AddComponent<SpriteRenderer>();
         renderer.sprite = coin;
         coins.Add(coinObj);

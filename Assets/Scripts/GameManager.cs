@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -80,6 +81,15 @@ public class GameManager : MonoBehaviour
         //Player 1:
         for(int i=0; i<p1FloorManager.coins.Count; i++) {
             if(momo1.GetComponent<BoxCollider2D>().bounds.Contains(p1FloorManager.coins[i].transform.position)) {
+                if(p1FloorManager.coins[i].name.Equals("LifeCoinS"))
+                {
+                    LifeCoinEvent(1,"S");
+                }
+                else if (p1FloorManager.coins[i].name.Equals("LifeCoinP"))
+                {
+                    LifeCoinEvent(1, "P");
+                }
+                
                 soundManager.PlayCoinCollectedSound();
                 player1Score+=5;
                 Destroy(p1FloorManager.coins[i].gameObject);
@@ -89,12 +99,53 @@ public class GameManager : MonoBehaviour
         //Player 2:
         for(int i=0; i<p2FloorManager.coins.Count; i++) {
             if(momo2.GetComponent<BoxCollider2D>().bounds.Contains(p2FloorManager.coins[i].transform.position)) {
+                if (p2FloorManager.coins[i].name.Equals("LifeCoinS"))
+                {
+                    LifeCoinEvent(2,"S");
+                }
+                else if (p2FloorManager.coins[i].name.Equals("LifeCoinP"))
+                {
+                    LifeCoinEvent(2, "P");
+                }
                 soundManager.PlayCoinCollectedSound();
                 player2Score+=5;
                 Destroy(p2FloorManager.coins[i].gameObject);
                 p2FloorManager.coins.RemoveAt(i);
             }
         }
+    }
+
+    private void LifeCoinEvent(int v, string u)
+    {
+        if (v == 1)
+        { 
+            if (u == "S")
+            {
+                player1Lives++;
+            }
+            else if ( u == "P")
+            {
+                player2Lives--;
+            }
+
+            
+        
+        }
+
+        else if (v == 2)
+        {
+            if(u == "S")
+            {
+                player2Lives++;
+            }
+            else if (u == "P")
+            {
+                player1Lives--;
+            }
+
+        }
+        
+
     }
 
     void UpdateLives() 
@@ -117,4 +168,6 @@ public class GameManager : MonoBehaviour
             heart1.sprite = emptyHeart;
         }
     }
+
+
 }
