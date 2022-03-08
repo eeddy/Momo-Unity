@@ -21,16 +21,22 @@ public class GameManager : MonoBehaviour
     private int player1Score;
     private int player2Score;
 
+    bool player1WallDangerMode = false;
+    bool player2WallDangerMode = false;
+
     private bool p1Touching, p2Touching;
 
     private SoundManager soundManager;
+
+    public int Player1Lives { get => player1Lives; set => player1Lives = value; }
+    public int Player2Lives { get => player2Lives; set => player2Lives = value; }
 
     // Start is called before the first frame update
     void Start()
     {
         //Set initial player lives 
-        player1Lives = 3;
-        player2Lives = 3; 
+        Player1Lives = 2;
+        Player2Lives = 2; 
         //Set initial coins
         player1Score = 0;
         player2Score = 0;
@@ -52,7 +58,8 @@ public class GameManager : MonoBehaviour
             player2Score+=5;
         }
         UpdateLives();
-        CheckForCoinCollisisons();
+        CheckForCoinCollisions();
+        CheckForWallCollisions();
         CheckForSpikeTouch();
     }
 
@@ -62,7 +69,7 @@ public class GameManager : MonoBehaviour
             p1Touching = true;
             p1FloorManager.Reset();
             soundManager.PlayLoseLifeSound();
-            player1Lives--;
+            Player1Lives--;
         } else if(!p1Spikes.GetComponent<BoxCollider2D>().IsTouching(momo1.GetComponent<BoxCollider2D>())) {
             p1Touching = false;
         }
@@ -70,88 +77,126 @@ public class GameManager : MonoBehaviour
             p2Touching = true;
             p2FloorManager.Reset();
             soundManager.PlayLoseLifeSound();
-            player2Lives--;
+            Player2Lives--;
         } else if(!p2Spikes.GetComponent<BoxCollider2D>().IsTouching(momo2.GetComponent<BoxCollider2D>())) {
             p2Touching = false;
         }
     }
 
-    void CheckForCoinCollisisons() 
+    void CheckForCoinCollisions() 
     {
         //Player 1:
         for(int i=0; i<p1FloorManager.coins.Count; i++) {
-            if(momo1.GetComponent<BoxCollider2D>().bounds.Contains(p1FloorManager.coins[i].transform.position)) {
-                if(p1FloorManager.coins[i].name.Equals("LifeCoinS"))
-                {
-                    LifeCoinEvent(1,"S");
-                }
-                else if (p1FloorManager.coins[i].name.Equals("LifeCoinP"))
-                {
-                    LifeCoinEvent(1, "P");
-                }
-                
+            if(momo1.GetComponent<BoxCollider2D>().bounds.Contains(p1FloorManager.coins[i].transform.position))
+            {
+                LifeCoinCheckP1(i);
+
                 soundManager.PlayCoinCollectedSound();
-                player1Score+=5;
+                player1Score += 5;
                 Destroy(p1FloorManager.coins[i].gameObject);
                 p1FloorManager.coins.RemoveAt(i);
             }
         }
         //Player 2:
         for(int i=0; i<p2FloorManager.coins.Count; i++) {
-            if(momo2.GetComponent<BoxCollider2D>().bounds.Contains(p2FloorManager.coins[i].transform.position)) {
-                if (p2FloorManager.coins[i].name.Equals("LifeCoinS"))
-                {
-                    LifeCoinEvent(2,"S");
-                }
-                else if (p2FloorManager.coins[i].name.Equals("LifeCoinP"))
-                {
-                    LifeCoinEvent(2, "P");
-                }
+            if(momo2.GetComponent<BoxCollider2D>().bounds.Contains(p2FloorManager.coins[i].transform.position))
+            {
+                LifeCoinCheckP2(i);
                 soundManager.PlayCoinCollectedSound();
-                player2Score+=5;
+                player2Score += 5;
                 Destroy(p2FloorManager.coins[i].gameObject);
                 p2FloorManager.coins.RemoveAt(i);
             }
         }
     }
 
-    private void LifeCoinEvent(int v, string u)
+    private void LifeCoinCheckP1(int i)
     {
-        if (v == 1)
-        { 
-            if (u == "S")
-            {
-                player1Lives++;
-            }
-            else if ( u == "P")
-            {
-                player2Lives--;
-            }
+        if (p1FloorManager.coins[i].name.Equals("LifeCoinS"))
+        {
+            LifeCoinEvent(1, "S");
+        }
+        else if (p1FloorManager.coins[i].name.Equals("LifeCoinP"))
+        {
+            LifeCoinEvent(1, "P");
+        }
+    }
 
+    private void LifeCoinCheckP2(int i)
+    {
+        if (p2FloorManager.coins[i].name.Equals("LifeCoinS"))
+        {
+            LifeCoinEvent(2, "S");
+        }
+        else if (p2FloorManager.coins[i].name.Equals("LifeCoinP"))
+        {
+            LifeCoinEvent(2, "P");
+        }
+    }
+
+    private void LifeCoinEvent(int playerNum, string coinType)
+    {
+        if (playerNum == 1)
+        {
+            if (coinType == "S")
+            {
+                Player1Lives++;
+            }
+            else if (coinType == "P")
+            {
+                Player2Lives--;
+            }
             
         
         }
-
-        else if (v == 2)
+        else if (playerNum == 2)
         {
-            if(u == "S")
+            if(coinType == "S")
             {
-                player2Lives++;
+                Player2Lives++;
             }
-            else if (u == "P")
+            else if (coinType == "P")
             {
-                player1Lives--;
+                Player1Lives--;
             }
 
-        }
-        
-
+        }        
     }
 
+    private void CheckForWallCollisions()
+    {
+        for (int i = 0; i < p1FloorManager.obstacles.Count; i++)
+        {
+            if (momo1.GetComponent<BoxCollider2D>().bounds.Contains(p1FloorManager.obstacles[i].transform.position))
+            {
+                if(player1WallDangerMode) { player1Lives--; }
+            }
+        }
+        //Player 2:
+        for (int i = 0; i < p2FloorManager.coins.Count; i++)
+        {
+            if (momo2.GetComponent<BoxCollider2D>().bounds.Contains(p2FloorManager.obstacles[i].transform.position))
+            {
+                if (player2WallDangerMode) { player2Lives--; }
+            }
+        }
+    }
+    
+    private void WallCoinCheckp1(int i)
+    {
+        if (p1FloorManager.coins[i].name.Equals("LifeCoinS"))
+        {
+            LifeCoinEvent(1, "S");
+        }
+        else if (p1FloorManager.coins[i].name.Equals("LifeCoinP"))
+        {
+            LifeCoinEvent(1, "P");
+        }
+    }
     void UpdateLives() 
     {
-        UpdateplayerLives(player1Lives, p1h1, p1h2, p1h3);
-        UpdateplayerLives(player2Lives, p2h1, p2h2, p2h3);
+        UpdateplayerLives(Player1Lives, p1h1, p1h2, p1h3);
+        UpdateplayerLives(Player2Lives, p2h1, p2h2, p2h3);
     }
 
     void UpdateplayerLives(int numLives, Image heart1, Image heart2, Image heart3) {

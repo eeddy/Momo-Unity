@@ -17,7 +17,7 @@ public class FloorManager : MonoBehaviour
 
     private List<GameObject> rightFloors; 
     private List<GameObject> leftFloors;
-    private List<GameObject> obstacles;
+    public List<GameObject> obstacles; // public so the danger wall can be activated in game manager
     public List<GameObject> coins; //Public so it can be accessed from the game manager
 
     private float height, width;
