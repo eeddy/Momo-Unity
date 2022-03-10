@@ -114,7 +114,6 @@ public class GameManager : MonoBehaviour
 
         if (player2WallSafeModeTimer.Finished)
         {
-            Debug.Log("p2timerfinish");
             player2WallSafeMode = false;
             p2FloorManager.ActivateWalls();
             player2WallSafeModeTimer.Stop();
