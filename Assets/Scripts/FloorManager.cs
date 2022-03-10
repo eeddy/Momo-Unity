@@ -10,7 +10,9 @@ public class FloorManager : MonoBehaviour
     
     public Sprite normalGround;
     public Sprite obstacle;
-    public Sprite coin; 
+    public Sprite coin;
+    public Sprite supporterCoin;
+    public Sprite punisherCoin;
 
     private float screenWidth;
     private float screenHeight;
@@ -196,6 +198,10 @@ public class FloorManager : MonoBehaviour
         SpriteRenderer renderer = obs.AddComponent<SpriteRenderer>();
         renderer.sprite = obstacle;
         obs.AddComponent<BoxCollider2D>();
+        obs.AddComponent<Rigidbody2D>();
+        obs.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+        obs.AddComponent<Obstacle>();
+        
         obstacles.Add(obs);
         return obs;
     }
@@ -210,20 +216,20 @@ public class FloorManager : MonoBehaviour
         float spriteWidth = coin.texture.width / coin.pixelsPerUnit;
         float spriteHeight = coin.texture.height / coin.pixelsPerUnit;
         string coinType;
-        if(Random.RandomRange(0 , 10) > 0)
+        if(Random.Range(0 , 10) > 0)
         {
-            if(Random.RandomRange(0,5) > 2)
+            if(Random.Range(0,5) > 2)
             {
-                coinType = "LifeCoinP";
-                Debug.Log("LifeCoinPPP!");
+                
+                coinType = "WallCoinP";
+                
             }
             else
             {
-                coinType = "LifeCoinS";
-                Debug.Log("LifeCoinSSS!");
-            }
-            
-           
+                
+                coinType = "WallCoinP";
+                
+            }  
         }
         else
         {
@@ -252,4 +258,18 @@ public class FloorManager : MonoBehaviour
 
     //public void CheckOverlap() --> This would be awesome to add at some point.
     
+    public void DeactivateWalls()
+    {
+        foreach(GameObject obstacle in obstacles)
+        {
+            obstacle.SetActive(false);
+        }
+    }
+    public void ActivateWalls()
+    {
+        foreach (GameObject obstacle in obstacles)
+        {
+            obstacle.SetActive(true);
+        }
+    }
 }
