@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +10,6 @@ public class GameManager : MonoBehaviour
     public Sprite fullHeart;
     public Sprite emptyHeart;
     public FloorManager p1FloorManager, p2FloorManager;
-    public int wallEventDuration = 10;
 
     public GameObject momo1, momo2, p1Spikes, p2Spikes; 
 
@@ -22,31 +20,16 @@ public class GameManager : MonoBehaviour
     private int player1Score;
     private int player2Score;
 
-    public bool player1WallDangerMode = false;
-    public bool player2WallDangerMode = false;
-    Timer player1WallDangerModeTimer;
-    Timer player2WallDangerModeTimer;
-
-
-    bool player1WallSafeMode = false;
-    bool player2WallSafeMode = false;
-    Timer player1WallSafeModeTimer;
-    Timer player2WallSafeModeTimer;
-
-
     private bool p1Touching, p2Touching;
 
     private SoundManager soundManager;
-
-    public int Player1Lives { get => player1Lives; set => player1Lives = value; }
-    public int Player2Lives { get => player2Lives; set => player2Lives = value; }
 
     // Start is called before the first frame update
     void Start()
     {
         //Set initial player lives 
-        Player1Lives = 3;
-        Player2Lives = 3; 
+        player1Lives = 3;
+        player2Lives = 3; 
         //Set initial coins
         player1Score = 0;
         player2Score = 0;
@@ -54,11 +37,6 @@ public class GameManager : MonoBehaviour
         p2Touching = false;
         
         soundManager = FindObjectOfType<SoundManager>();
-
-        player1WallDangerModeTimer = gameObject.AddComponent<Timer>();
-        player2WallDangerModeTimer = gameObject.AddComponent<Timer>();
-        player1WallSafeModeTimer = gameObject.AddComponent<Timer>();
-        player2WallSafeModeTimer = gameObject.AddComponent<Timer>();
     }
 
     // Update is called once per frame
@@ -72,59 +50,9 @@ public class GameManager : MonoBehaviour
             player1Score+=5;
             player2Score+=5;
         }
-
         UpdateLives();
-        CheckForCoinCollisions();
-        
+        CheckForCoinCollisisons();
         CheckForSpikeTouch();
-        CheckTimerForDangerSafeVars();
-
-        
-
-    }
-
-    private void CheckTimerForDangerSafeVars()
-    {
-
-        if (player1WallDangerModeTimer.Finished)
-        {
-            player1WallDangerMode = false;
-            player1WallDangerModeTimer.Stop();
-        }
-        
-
-        if (player2WallDangerModeTimer.Finished)
-        {
-            player2WallDangerMode = false;
-            player2WallDangerModeTimer.Stop();
-        }
-
-        
-        if (player1WallSafeModeTimer.Finished)
-        {
-            player1WallSafeMode = false;
-            p1FloorManager.ActivateWalls();
-            player1WallSafeModeTimer.Stop();
-        } 
-        else if (player1WallSafeModeTimer.Started)        
-        {
-            p1FloorManager.DeactivateWalls();
-        }
-
-
-        if (player2WallSafeModeTimer.Finished)
-        {
-            player2WallSafeMode = false;
-            p2FloorManager.ActivateWalls();
-            player2WallSafeModeTimer.Stop();
-        }
-        else if (player2WallSafeModeTimer.Started)
-        {
-            p2FloorManager.DeactivateWalls();
-        }
-
-        
-
     }
 
     void CheckForSpikeTouch() 
@@ -133,7 +61,7 @@ public class GameManager : MonoBehaviour
             p1Touching = true;
             p1FloorManager.Reset();
             soundManager.PlayLoseLifeSound();
-            Player1Lives--;
+            player1Lives--;
         } else if(!p1Spikes.GetComponent<BoxCollider2D>().IsTouching(momo1.GetComponent<BoxCollider2D>())) {
             p1Touching = false;
         }
@@ -141,145 +69,38 @@ public class GameManager : MonoBehaviour
             p2Touching = true;
             p2FloorManager.Reset();
             soundManager.PlayLoseLifeSound();
-            Player2Lives--;
+            player2Lives--;
         } else if(!p2Spikes.GetComponent<BoxCollider2D>().IsTouching(momo2.GetComponent<BoxCollider2D>())) {
             p2Touching = false;
         }
     }
 
-    void CheckForCoinCollisions() 
+    void CheckForCoinCollisisons() 
     {
         //Player 1:
         for(int i=0; i<p1FloorManager.coins.Count; i++) {
-            if(momo1.GetComponent<BoxCollider2D>().bounds.Contains(p1FloorManager.coins[i].transform.position))
-            {
-                LifeCoinCheckP1(i);
-                WallCoinCheckP1(i);
-
+            if(momo1.GetComponent<BoxCollider2D>().bounds.Contains(p1FloorManager.coins[i].transform.position)) {
                 soundManager.PlayCoinCollectedSound();
-                player1Score += 5;
+                player1Score+=5;
                 Destroy(p1FloorManager.coins[i].gameObject);
                 p1FloorManager.coins.RemoveAt(i);
             }
         }
         //Player 2:
         for(int i=0; i<p2FloorManager.coins.Count; i++) {
-            if(momo2.GetComponent<BoxCollider2D>().bounds.Contains(p2FloorManager.coins[i].transform.position))
-            {
-                LifeCoinCheckP2(i);
-                WallCoinCheckP2(i);
-
+            if(momo2.GetComponent<BoxCollider2D>().bounds.Contains(p2FloorManager.coins[i].transform.position)) {
                 soundManager.PlayCoinCollectedSound();
-                player2Score += 5;
+                player2Score+=5;
                 Destroy(p2FloorManager.coins[i].gameObject);
                 p2FloorManager.coins.RemoveAt(i);
             }
         }
     }
 
-    private void LifeCoinCheckP1(int i)
-    {
-        if (p1FloorManager.coins[i].name.Equals("LifeCoinS"))
-        {
-            LifeCoinEvent(1, "S");
-        }
-        else if (p1FloorManager.coins[i].name.Equals("LifeCoinP"))
-        {
-            LifeCoinEvent(1, "P");
-        }
-    }
-
-    private void LifeCoinCheckP2(int i)
-    {
-        if (p2FloorManager.coins[i].name.Equals("LifeCoinS"))
-        {
-            LifeCoinEvent(2, "S");
-        }
-        else if (p2FloorManager.coins[i].name.Equals("LifeCoinP"))
-        {
-            LifeCoinEvent(2, "P");
-        }
-    }
-
-    private void LifeCoinEvent(int playerNum, string coinType)
-    {
-        if (playerNum == 1)
-        {
-            if (coinType == "S"){Player1Lives++;} else if (coinType == "P"){ Player2Lives--;}
-        }
-        else if (playerNum == 2)
-        {
-            if(coinType == "S"){Player2Lives++;} else if (coinType == "P"){Player1Lives--;}
-
-        }        
-    }
-    
-    private void WallCoinCheckP1(int i)
-    {
-        if (p1FloorManager.coins[i].name.Equals("WallCoinS"))
-        {
-            WallCoinEvent(1, "S");
-        }
-        else if (p1FloorManager.coins[i].name.Equals("WallCoinP"))
-        {
-            WallCoinEvent(1, "P");
-        }
-    }
-
-    private void WallCoinCheckP2(int i)
-    {
-        if (p2FloorManager.coins[i].name.Equals("WallCoinS"))
-        {
-            WallCoinEvent(2, "S");
-        }
-        else if (p2FloorManager.coins[i].name.Equals("WallCoinP"))
-        {
-            WallCoinEvent(2, "P");
-        }
-    }
-
-    private void WallCoinEvent(int playerNum, string coinType)
-    {
-        if (playerNum == 1)
-        {
-            if (coinType == "S")
-            {
-                player1WallSafeMode = true;
-                player1WallSafeModeTimer.Duration = wallEventDuration;
-                player1WallSafeModeTimer.Run();
-
-            
-            } else if (coinType == "P") {
-
-               
-                player2WallDangerMode = true;
-                player2WallDangerModeTimer.Duration = wallEventDuration;
-                player2WallDangerModeTimer.Run();
-            }
-        }
-        else if (playerNum == 2)
-        {
-            if (coinType == "S") 
-            {
-                
-                player2WallSafeMode = true;
-                player2WallSafeModeTimer.Duration = wallEventDuration;
-                player2WallSafeModeTimer.Run();
-
-            } 
-            else if (coinType == "P") { 
-
-                player1WallDangerMode = true;
-                player1WallDangerModeTimer.Duration = wallEventDuration;
-                player1WallDangerModeTimer.Run();
-            }
-        }
-    }
-
     void UpdateLives() 
     {
-        UpdateplayerLives(Player1Lives, p1h1, p1h2, p1h3);
-        UpdateplayerLives(Player2Lives, p2h1, p2h2, p2h3);
+        UpdateplayerLives(player1Lives, p1h1, p1h2, p1h3);
+        UpdateplayerLives(player2Lives, p2h1, p2h2, p2h3);
     }
 
     void UpdateplayerLives(int numLives, Image heart1, Image heart2, Image heart3) {
@@ -296,6 +117,4 @@ public class GameManager : MonoBehaviour
             heart1.sprite = emptyHeart;
         }
     }
-
-
 }
