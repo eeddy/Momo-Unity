@@ -1051,9 +1051,6 @@ MonoBehaviour:
   normalGround: {fileID: 21300000, guid: 1256cf9f4e60d894496bef4be4b06ddc, type: 3}
   obstacle: {fileID: 21300000, guid: 9f8e7873ebd59dd46afae05c83405e9b, type: 3}
   coin: {fileID: 21300000, guid: 80fdae193a3c38e4bb904f110787c769, type: 3}
-  supporterCoin: {fileID: 21300000, guid: f10d0fe0d7bf6e347b19a264663c864e, type: 3}
-  punisherCoin: {fileID: 21300000, guid: 64a8e1b15cf38aa4d9fc834a682cb72a, type: 3}
-  obstacles: []
   coins: []
 --- !u!1 &798018956
 GameObject:
@@ -1179,13 +1176,10 @@ MonoBehaviour:
   emptyHeart: {fileID: 21300000, guid: dec154b0f5955c44cad005b63b8510b6, type: 3}
   p1FloorManager: {fileID: 712743340}
   p2FloorManager: {fileID: 869169834}
-  wallEventDuration: 10
   momo1: {fileID: 698971092}
   momo2: {fileID: 476701693}
   p1Spikes: {fileID: 987309647}
   p2Spikes: {fileID: 2091134891}
-  player1WallDangerMode: 0
-  player2WallDangerMode: 0
 --- !u!4 &815144331
 Transform:
   m_ObjectHideFlags: 0
@@ -1358,9 +1352,6 @@ MonoBehaviour:
   normalGround: {fileID: 21300000, guid: 1256cf9f4e60d894496bef4be4b06ddc, type: 3}
   obstacle: {fileID: 21300000, guid: 9f8e7873ebd59dd46afae05c83405e9b, type: 3}
   coin: {fileID: 21300000, guid: 80fdae193a3c38e4bb904f110787c769, type: 3}
-  supporterCoin: {fileID: 21300000, guid: f10d0fe0d7bf6e347b19a264663c864e, type: 3}
-  punisherCoin: {fileID: 21300000, guid: 64a8e1b15cf38aa4d9fc834a682cb72a, type: 3}
-  obstacles: []
   coins: []
 --- !u!1 &869890668
 GameObject:

@@ -10,16 +10,14 @@ public class FloorManager : MonoBehaviour
     
     public Sprite normalGround;
     public Sprite obstacle;
-    public Sprite coin;
-    public Sprite supporterCoin;
-    public Sprite punisherCoin;
+    public Sprite coin; 
 
     private float screenWidth;
     private float screenHeight;
 
     private List<GameObject> rightFloors; 
     private List<GameObject> leftFloors;
-    public List<GameObject> obstacles; // public so the danger wall can be activated in game manager
+    private List<GameObject> obstacles;
     public List<GameObject> coins; //Public so it can be accessed from the game manager
 
     private float height, width;
@@ -198,82 +196,40 @@ public class FloorManager : MonoBehaviour
         SpriteRenderer renderer = obs.AddComponent<SpriteRenderer>();
         renderer.sprite = obstacle;
         obs.AddComponent<BoxCollider2D>();
-        obs.AddComponent<Rigidbody2D>();
-        obs.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
-        obs.AddComponent<Obstacle>();
-        
         obstacles.Add(obs);
         return obs;
     }
 
     public void CreateCoin(float floorHeight, GameObject obs) {
         //One in 2 chance of coing being created
-        int coinRandom = Random.Range(0, 2);
+        int coinRandom = Random.Range(0,2);
         // Return if not 1
-        if (coinRandom != 1) {
+        if(coinRandom != 1) {
             return;
         }
         float spriteWidth = coin.texture.width / coin.pixelsPerUnit;
         float spriteHeight = coin.texture.height / coin.pixelsPerUnit;
-        string coinType;
 
-        if (Random.Range(0, 10) > 0)
-        {
-            if (Random.Range(0, 5) > 2)
-            {
-
-                coinType = "WallCoinP";
-
-            }
-            else
-            {
-
-                coinType = "WallCoinP";
-
-            }
-        }
-        else
-        {
-            coinType = "Coin";
-        }
-        GameObject coinObj = new GameObject(coinType);
+        GameObject coinObj = new GameObject("Coin");
         coinObj.transform.localScale = new Vector3(1f, 1f);
 
-        float location = Random.Range(0.5f, width / 2 - 0.5f);
-        if (leftSide) {
-            while (obs.GetComponent<BoxCollider2D>().bounds.Contains(new Vector3(-location, -height / 2 + spriteHeight / 2 + floorHeight))) {
-                location = Random.Range(0.5f, width / 2 - 0.5f);
+        float location = Random.Range(0.5f,width/2-0.5f);
+        if(leftSide) {  
+            while(obs.GetComponent<BoxCollider2D>().bounds.Contains(new Vector3(-location,-height/2 + spriteHeight/2 + floorHeight))) {
+                location = Random.Range(0.5f,width/2-0.5f);
             }
-            coinObj.transform.position = new Vector3(-location, -height / 2 + spriteHeight / 2 + floorHeight);
+            coinObj.transform.position = new Vector3(-location,-height/2 + spriteHeight/2 + floorHeight);
         } else {
-            while (obs.GetComponent<BoxCollider2D>().bounds.Contains(new Vector3(location, -height / 2 + spriteHeight / 2 + floorHeight))) {
-                location = Random.Range(0.5f, width / 2 - 0.5f);
+            while(obs.GetComponent<BoxCollider2D>().bounds.Contains(new Vector3(location,-height/2 + spriteHeight/2 + floorHeight))) {
+                location = Random.Range(0.5f,width/2-0.5f);
             }
-            coinObj.transform.position = new Vector3(location, -height / 2 + spriteHeight / 2 + floorHeight);
+            coinObj.transform.position = new Vector3(location,-height/2 + spriteHeight/2 + floorHeight);
         }
-
         SpriteRenderer renderer = coinObj.AddComponent<SpriteRenderer>();
-        if (coinType == "Coin") renderer.sprite = coin;
-        else if (coinType == "WallCoinP" || coinType == "LifeCoinP") renderer.sprite = punisherCoin;
-        else if (coinType == "WallCoinS" || coinType == "LifeCoinS") renderer.sprite = supporterCoin;
-        
+        renderer.sprite = coin;
         coins.Add(coinObj);
     }
 
     //public void CheckOverlap() --> This would be awesome to add at some point.
     
-    public void DeactivateWalls()
-    {
-        foreach(GameObject obstacle in obstacles)
-        {
-            obstacle.SetActive(false);
-        }
-    }
-    public void ActivateWalls()
-    {
-        foreach (GameObject obstacle in obstacles)
-        {
-            obstacle.SetActive(true);
-        }
-    }
 }
