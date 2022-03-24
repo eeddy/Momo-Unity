@@ -1015,7 +1015,7 @@ GameObject:
   - component: {fileID: 712743340}
   m_Layer: 0
   m_Name: FloorManager
-  m_TagString: Untagged
+  m_TagString: FloorM1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1049,12 +1049,15 @@ MonoBehaviour:
   momo: {fileID: 698971092}
   leftSide: 1
   normalGround: {fileID: 21300000, guid: 1256cf9f4e60d894496bef4be4b06ddc, type: 3}
-  obstacle: {fileID: 21300000, guid: 9f8e7873ebd59dd46afae05c83405e9b, type: 3}
+  obstacleSprite: {fileID: 21300000, guid: 9f8e7873ebd59dd46afae05c83405e9b, type: 3}
+  obstacleSpike: {fileID: 21300000, guid: 5fa64cb77c3f06a45a7c58bec309f60f, type: 3}
   coin: {fileID: 21300000, guid: 80fdae193a3c38e4bb904f110787c769, type: 3}
   supporterCoin: {fileID: 21300000, guid: f10d0fe0d7bf6e347b19a264663c864e, type: 3}
   punisherCoin: {fileID: 21300000, guid: 64a8e1b15cf38aa4d9fc834a682cb72a, type: 3}
   obstacles: []
   coins: []
+  player1Diff: 0
+  player2Diff: 50
 --- !u!1 &798018956
 GameObject:
   m_ObjectHideFlags: 0
@@ -1186,6 +1189,8 @@ MonoBehaviour:
   p2Spikes: {fileID: 2091134891}
   player1WallDangerMode: 0
   player2WallDangerMode: 0
+  player1Diff: 25
+  player2Diff: 25
 --- !u!4 &815144331
 Transform:
   m_ObjectHideFlags: 0
@@ -1322,7 +1327,7 @@ GameObject:
   - component: {fileID: 869169834}
   m_Layer: 0
   m_Name: FloorManager
-  m_TagString: Untagged
+  m_TagString: FloorM2
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1356,12 +1361,15 @@ MonoBehaviour:
   momo: {fileID: 476701693}
   leftSide: 0
   normalGround: {fileID: 21300000, guid: 1256cf9f4e60d894496bef4be4b06ddc, type: 3}
-  obstacle: {fileID: 21300000, guid: 9f8e7873ebd59dd46afae05c83405e9b, type: 3}
+  obstacleSprite: {fileID: 21300000, guid: 9f8e7873ebd59dd46afae05c83405e9b, type: 3}
+  obstacleSpike: {fileID: 21300000, guid: 5fa64cb77c3f06a45a7c58bec309f60f, type: 3}
   coin: {fileID: 21300000, guid: 80fdae193a3c38e4bb904f110787c769, type: 3}
   supporterCoin: {fileID: 21300000, guid: f10d0fe0d7bf6e347b19a264663c864e, type: 3}
   punisherCoin: {fileID: 21300000, guid: 64a8e1b15cf38aa4d9fc834a682cb72a, type: 3}
   obstacles: []
   coins: []
+  player1Diff: 0
+  player2Diff: 0
 --- !u!1 &869890668
 GameObject:
   m_ObjectHideFlags: 0

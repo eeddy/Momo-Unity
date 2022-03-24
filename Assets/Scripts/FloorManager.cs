@@ -9,10 +9,12 @@ public class FloorManager : MonoBehaviour
     public bool leftSide; 
     
     public Sprite normalGround;
-    public Sprite obstacle;
+    public Sprite obstacleSprite;
+    public Sprite obstacleSpike;
     public Sprite coin;
     public Sprite supporterCoin;
     public Sprite punisherCoin;
+    
 
     private float screenWidth;
     private float screenHeight;
@@ -23,6 +25,9 @@ public class FloorManager : MonoBehaviour
     public List<GameObject> coins; //Public so it can be accessed from the game manager
 
     private float height, width;
+
+    public int player1Diff;
+    public int player2Diff;
     
     private float floorSpeed = 0.5f;
     private float floorIncrement = 0.1f;
@@ -171,8 +176,8 @@ public class FloorManager : MonoBehaviour
 
     //Returns gameobject so we dont create coin overlapping it 
     public GameObject CreateObstacle(float floorHeight, GameObject rightFloor, GameObject leftFloor) {
-        float spriteWidth = obstacle.texture.width / obstacle.pixelsPerUnit;
-        float spriteHeight = obstacle.texture.height / obstacle.pixelsPerUnit;
+        float spriteWidth = obstacleSprite.texture.width / obstacleSprite.pixelsPerUnit;
+        float spriteHeight = obstacleSprite.texture.height / obstacleSprite.pixelsPerUnit;
 
         GameObject obs = new GameObject("Obstacle");
         obs.transform.localScale = new Vector3(2f, 2f);
@@ -196,7 +201,7 @@ public class FloorManager : MonoBehaviour
             obs.transform.position = new Vector3(location,-height/2 + spriteHeight*2/2 + floorHeight);
         }
         SpriteRenderer renderer = obs.AddComponent<SpriteRenderer>();
-        renderer.sprite = obstacle;
+        renderer.sprite = obstacleSprite;
         obs.AddComponent<BoxCollider2D>();
         obs.AddComponent<Rigidbody2D>();
         obs.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
@@ -207,35 +212,70 @@ public class FloorManager : MonoBehaviour
     }
 
     public void CreateCoin(float floorHeight, GameObject obs) {
-        //One in 2 chance of coing being created
-        int coinRandom = Random.Range(0, 2);
-        // Return if not 1
-        if (coinRandom != 1) {
-            return;
-        }
+
+       
+
         float spriteWidth = coin.texture.width / coin.pixelsPerUnit;
         float spriteHeight = coin.texture.height / coin.pixelsPerUnit;
-        string coinType;
+        string coinType = "";
 
-        if (Random.Range(0, 10) > 0)
+        //Let's implement russian roulette baby!
+        int roulette = Random.Range(0, 100);
+        
+        if (tag.Equals("FloorM1"))
         {
-            if (Random.Range(0, 5) > 2)
-            {
+            int noCoin = player1Diff; // probability for not spawning coin => between 0 to 50
+            int eventCoin =  50 + noCoin;
 
-                coinType = "WallCoinP";
+            if(roulette <= noCoin)
+            {
+                print("noCoin");
+                return;
+            }
+            else if (roulette >= eventCoin)
+            {
+                print("eventCoin");
+                int rand1 = Random.Range(0, 4);
+                print(rand1);
+                if (rand1 == 0) { coinType = "WallCoinS"; print("WallCoinS"); }
+                else if (rand1 == 1) { coinType = "WallCoinP"; print("WallCoinP"); }
+                else if (rand1 == 2) { coinType = "LifeCoinS"; print("LifeCoinS"); }
+                else if (rand1 == 3) { coinType = "LifeCoinP"; print("LifeCoinP"); }
+                
+            }
+            else
+            {
+                print("coin");
+                coinType = "Coin";
+            }
+
+            
+        }
+        else if(tag.Equals("FloorM2"))
+        {
+            int noCoin = player2Diff; // probability for not spawning coin => between 0 to 50
+            int eventCoin = 50 + noCoin;
+
+            if (roulette <= noCoin)
+            {
+                return;
+            }
+            else if (roulette >= eventCoin)
+            {
+                int rand2 = Random.Range(0, 4); print(rand2);
+                if (rand2 == 1) coinType = "WallCoinS";
+                else if (rand2 == 2) coinType = "WallCoinP";
+                else if (rand2 == 3) coinType = "LifeCoinS";
+                else if (rand2 == 4) coinType = "LifeCoinP";
 
             }
             else
             {
-
-                coinType = "WallCoinP";
-
+                coinType = "Coin";
             }
         }
-        else
-        {
-            coinType = "Coin";
-        }
+       
+        
         GameObject coinObj = new GameObject(coinType);
         coinObj.transform.localScale = new Vector3(1f, 1f);
 
@@ -275,5 +315,21 @@ public class FloorManager : MonoBehaviour
         {
             obstacle.SetActive(true);
         }
+    }
+
+    public void ChangeObsToSpike()
+    {
+        foreach(GameObject obstacle in obstacles)
+        {
+            obstacle.GetComponent<SpriteRenderer>().sprite = obstacleSpike;
+        }
+    }
+    public void ChangeSpikeToObs()
+    {
+        foreach(GameObject obstacle in obstacles)
+        {      
+            obstacle.GetComponent<SpriteRenderer>().sprite = obstacleSprite;
+        }
+
     }
 }

@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Spike
   - GameManager
+  - FloorM1
+  - FloorM2
   layers:
   - Default
   - TransparentFX

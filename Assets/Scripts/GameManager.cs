@@ -36,6 +36,10 @@ public class GameManager : MonoBehaviour
 
     private bool p1Touching, p2Touching;
 
+     [Range(0, 50)] public int player1Diff;
+     [Range(0, 50)] public int player2Diff;
+
+
     private SoundManager soundManager;
 
     public int Player1Lives { get => player1Lives; set => player1Lives = value; }
@@ -59,6 +63,10 @@ public class GameManager : MonoBehaviour
         player2WallDangerModeTimer = gameObject.AddComponent<Timer>();
         player1WallSafeModeTimer = gameObject.AddComponent<Timer>();
         player2WallSafeModeTimer = gameObject.AddComponent<Timer>();
+
+        p1FloorManager.player1Diff = player2Diff;
+        p2FloorManager.player2Diff = player2Diff;
+        
     }
 
     // Update is called once per frame
@@ -78,9 +86,23 @@ public class GameManager : MonoBehaviour
         
         CheckForSpikeTouch();
         CheckTimerForDangerSafeVars();
-
+        UpdateObstacleSprite();
         
 
+    }
+
+    private void UpdateObstacleSprite()
+    {
+        if(player1WallDangerMode)
+        {
+            p1FloorManager.ChangeObsToSpike();
+        }
+        
+        if (player2WallDangerMode)
+        {
+            p2FloorManager.ChangeObsToSpike();
+        }
+        
     }
 
     private void CheckTimerForDangerSafeVars()
@@ -89,14 +111,24 @@ public class GameManager : MonoBehaviour
         if (player1WallDangerModeTimer.Finished)
         {
             player1WallDangerMode = false;
+            p1FloorManager.ChangeSpikeToObs();
             player1WallDangerModeTimer.Stop();
+        }
+        else if(player1WallDangerModeTimer.Started)
+        {
+            p1FloorManager.ChangeObsToSpike();
         }
         
 
         if (player2WallDangerModeTimer.Finished)
         {
             player2WallDangerMode = false;
+            p2FloorManager.ChangeSpikeToObs();
             player2WallDangerModeTimer.Stop();
+        }
+        else if(player2WallDangerModeTimer.Started)
+        {
+            p2FloorManager.ChangeObsToSpike();
         }
 
         
