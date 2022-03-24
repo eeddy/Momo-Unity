@@ -210,7 +210,7 @@ public class FloorManager : MonoBehaviour
         obstacles.Add(obs);
         return obs;
     }
-
+    //HERE 
     public void CreateCoin(float floorHeight, GameObject obs) {
 
        

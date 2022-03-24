@@ -269,7 +269,7 @@ public class GameManager : MonoBehaviour
             WallCoinEvent(2, "P");
         }
     }
-
+    //HERE
     private void WallCoinEvent(int playerNum, string coinType)
     {
         if (playerNum == 1)

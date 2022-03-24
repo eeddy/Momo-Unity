@@ -1057,7 +1057,7 @@ MonoBehaviour:
   obstacles: []
   coins: []
   player1Diff: 0
-  player2Diff: 50
+  player2Diff: 0
 --- !u!1 &798018956
 GameObject:
   m_ObjectHideFlags: 0
