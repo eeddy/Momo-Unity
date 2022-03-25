@@ -6,11 +6,22 @@ public class FloorManager : MonoBehaviour
 {
     // Public Variables
     public GameObject momo; 
+    public FloorManager otherFloorManager;
     public bool leftSide; 
     
     public Sprite normalGround;
     public Sprite obstacle;
-    public Sprite coin; 
+    
+    //Power-ups:
+    public Sprite floorRemover;
+    public Sprite speedDown; 
+    public Sprite speedUp; 
+    public Sprite swordWalls;
+
+    public Sprite swordWall;
+
+    List<string> powerupNames;
+    List<Sprite> powerupSprites;
 
     private float screenWidth;
     private float screenHeight;
@@ -18,11 +29,12 @@ public class FloorManager : MonoBehaviour
     private List<GameObject> rightFloors; 
     private List<GameObject> leftFloors;
     private List<GameObject> obstacles;
-    public List<GameObject> coins; //Public so it can be accessed from the game manager
+    private List<GameObject> dangerousObstacles;
+    public List<GameObject> powerups; //Public so it can be accessed from the game manager
 
     private float height, width;
     
-    private float floorSpeed = 0.5f;
+    public float floorSpeed = 0.5f;
     private float floorIncrement = 0.1f;
     private float previousTime = 0f;
     private float previousFloorSpawn = 0f;
@@ -38,8 +50,25 @@ public class FloorManager : MonoBehaviour
         rightFloors = new List<GameObject>();
         leftFloors = new List<GameObject>();
         obstacles = new List<GameObject>();
-        coins = new List<GameObject>();
+        powerups = new List<GameObject>();
+        dangerousObstacles = new List<GameObject>();
+        InitializePowerups();
         CreateFloor();
+    }
+
+    void InitializePowerups() 
+    {
+        powerupNames = new List<string>();
+        powerupNames.Add("RemoveFloor");
+        powerupNames.Add("IncreaseSpeed");
+        powerupNames.Add("SlowSpeed");
+        powerupNames.Add("SwordWalls");
+
+        powerupSprites = new List<Sprite>();
+        powerupSprites.Add(floorRemover);
+        powerupSprites.Add(speedUp);
+        powerupSprites.Add(speedDown);
+        powerupSprites.Add(swordWalls);
     }
 
     // Update is called once per frame
@@ -64,23 +93,70 @@ public class FloorManager : MonoBehaviour
         for(int i=0; i<obstacles.Count; i++) {
             obstacles[i].transform.position += new Vector3(0, floorSpeed * Time.deltaTime, 0);
         }
-        //Update coins
-        for(int i=0; i<coins.Count; i++) {
-            coins[i].transform.position += new Vector3(0, floorSpeed * Time.deltaTime, 0);
+        //Update dangerous obstacles
+        for(int i=0; i<dangerousObstacles.Count; i++) {
+            dangerousObstacles[i].transform.position += new Vector3(0, floorSpeed * Time.deltaTime, 0);
+        }
+        //Update powerups
+        for(int i=0; i<powerups.Count; i++) {
+            powerups[i].transform.position += new Vector3(0, floorSpeed * Time.deltaTime, 0);
         }
         DeleteFloors();
         DeleteObstacles();
-        DeleteCoins();
+        DeletePowerups();
+    }
+
+    public bool CheckSwordTouch() 
+    {
+        for(int i=0; i<dangerousObstacles.Count; i++) {
+            if(dangerousObstacles[i].GetComponent<BoxCollider2D>().IsTouching(momo.GetComponent<BoxCollider2D>())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    // Check power ups:
+    public void AcquiredPowerup(int idx) 
+    {
+        GameObject obj = powerups[idx];
+        Destroy(powerups[idx].gameObject);
+        powerups.RemoveAt(idx);
+        if (obj.name == "RemoveFloor") {
+            FloorRemovalCoinAchieved();
+        } else if (obj.name == "IncreaseSpeed") {
+            otherFloorManager.IncreaseSpeed();
+        } else if (obj.name == "SlowSpeed") {
+            floorSpeed = floorSpeed * 0.75f;
+        } else { //Sword walls
+            otherFloorManager.SwordWalls();
+        }
+    }
+
+    public void SwordWalls() 
+    {
+        if(dangerousObstacles.Count != 0) {
+            return;
+        }
+        for(int i=0; i<obstacles.Count; i++) {
+            obstacles[i].GetComponent<SpriteRenderer>().sprite = swordWall;
+            dangerousObstacles.Add(obstacles[i]);
+        }
+        obstacles = new List<GameObject>();
+    }
+
+    public void IncreaseSpeed() 
+    {
+        floorSpeed = floorSpeed * 1.25f;
     }
 
     //Called when the person dies
     public void Reset() 
     {
         floorSpeed = 0.5f;
-        for(int i=0; i<coins.Count; i++) {
-            Destroy(coins[i].gameObject);
+        for(int i=0; i<powerups.Count; i++) {
+            Destroy(powerups[i].gameObject);
         }
-        coins = new List<GameObject>();
+        powerups = new List<GameObject>();
         for(int i=0; i<rightFloors.Count; i++) {
             Destroy(rightFloors[i].gameObject);
             Destroy(leftFloors[i].gameObject);
@@ -91,6 +167,33 @@ public class FloorManager : MonoBehaviour
             Destroy(obstacles[i].gameObject);
         }
         obstacles = new List<GameObject>();
+        for(int i=0; i<dangerousObstacles.Count; i++) {
+            Destroy(dangerousObstacles[i].gameObject);
+        }
+        dangerousObstacles = new List<GameObject>();
+    }
+
+    public void FloorRemovalCoinAchieved() 
+    {
+        // Delete Powerups 
+        for(int i=0; i<powerups.Count; i++) {
+            Destroy(powerups[i].gameObject);
+        }
+        powerups = new List<GameObject>();
+        for(int i=0; i<rightFloors.Count; i++) {
+            Destroy(rightFloors[i].gameObject);
+            Destroy(leftFloors[i].gameObject);
+        }
+        rightFloors = new List<GameObject>();
+        leftFloors = new List<GameObject>();
+        for(int i=0; i<obstacles.Count; i++) {
+            Destroy(obstacles[i].gameObject);
+        }
+        obstacles = new List<GameObject>();
+        for(int i=0; i<dangerousObstacles.Count; i++) {
+            Destroy(dangerousObstacles[i].gameObject);
+        }
+        dangerousObstacles = new List<GameObject>();
     }
 
     void DeleteFloors() 
@@ -113,14 +216,20 @@ public class FloorManager : MonoBehaviour
                 obstacles.RemoveAt(i);
             }
         }
+        for(int i=0; i<dangerousObstacles.Count; i++) {
+            if (dangerousObstacles[i].transform.position.y > height) {
+                Destroy(dangerousObstacles[i].gameObject);
+                dangerousObstacles.RemoveAt(i);
+            }
+        }
     }
 
-    void DeleteCoins() 
+    void DeletePowerups() 
     {
-        for(int i=0; i<coins.Count; i++) {
-            if (coins[i].transform.position.y > height) {
-                Destroy(coins[i].gameObject);
-                coins.RemoveAt(i);
+        for(int i=0; i<powerups.Count; i++) {
+            if (powerups[i].transform.position.y > height) {
+                Destroy(powerups[i].gameObject);
+                powerups.RemoveAt(i);
             }
         }
     }
@@ -164,7 +273,8 @@ public class FloorManager : MonoBehaviour
         leftFloors.Add(floorLeft);
         rightFloors.Add(floorRight);
         GameObject obs = CreateObstacle(spriteHeight*heightScale, floorRight, floorLeft);
-        CreateCoin(spriteHeight*heightScale,obs);
+        // Only spawn power up if they dont already have one
+        CreatePowerup(spriteHeight*heightScale,obs);
     }
 
     //Returns gameobject so we dont create coin overlapping it 
@@ -173,7 +283,7 @@ public class FloorManager : MonoBehaviour
         float spriteHeight = obstacle.texture.height / obstacle.pixelsPerUnit;
 
         GameObject obs = new GameObject("Obstacle");
-        obs.transform.localScale = new Vector3(2f, 2f);
+        obs.transform.localScale = new Vector3(1.75f, 1.75f);
 
         float location = Random.Range(0.5f,width/2-0.5f);
 
@@ -200,34 +310,39 @@ public class FloorManager : MonoBehaviour
         return obs;
     }
 
-    public void CreateCoin(float floorHeight, GameObject obs) {
-        //One in 2 chance of coing being created
-        int coinRandom = Random.Range(0,2);
-        // Return if not 1
-        if(coinRandom != 1) {
+    public void CreatePowerup(float floorHeight, GameObject obs) {
+        //One in 4 chance of coing being created
+        int powerupRandom = Random.Range(0,4);
+        // Return if not 0
+        if(powerupRandom != 0) {
             return;
         }
-        float spriteWidth = coin.texture.width / coin.pixelsPerUnit;
-        float spriteHeight = coin.texture.height / coin.pixelsPerUnit;
 
-        GameObject coinObj = new GameObject("Coin");
-        coinObj.transform.localScale = new Vector3(1f, 1f);
+        //Power up is generated:
+        float spriteWidth = floorRemover.texture.width / floorRemover.pixelsPerUnit;
+        float spriteHeight = floorRemover.texture.height / floorRemover.pixelsPerUnit;
+
+        // Determine type of power-up:
+        int pIndex = Random.Range(0,4);
+
+        GameObject powerObj = new GameObject(powerupNames[pIndex]);
+        powerObj.transform.localScale = new Vector3(1f, 1f);
 
         float location = Random.Range(0.5f,width/2-0.5f);
         if(leftSide) {  
             while(obs.GetComponent<BoxCollider2D>().bounds.Contains(new Vector3(-location,-height/2 + spriteHeight/2 + floorHeight))) {
                 location = Random.Range(0.5f,width/2-0.5f);
             }
-            coinObj.transform.position = new Vector3(-location,-height/2 + spriteHeight/2 + floorHeight);
+            powerObj.transform.position = new Vector3(-location,-height/2 + spriteHeight/2 + floorHeight);
         } else {
             while(obs.GetComponent<BoxCollider2D>().bounds.Contains(new Vector3(location,-height/2 + spriteHeight/2 + floorHeight))) {
                 location = Random.Range(0.5f,width/2-0.5f);
             }
-            coinObj.transform.position = new Vector3(location,-height/2 + spriteHeight/2 + floorHeight);
+            powerObj.transform.position = new Vector3(location,-height/2 + spriteHeight/2 + floorHeight);
         }
-        SpriteRenderer renderer = coinObj.AddComponent<SpriteRenderer>();
-        renderer.sprite = coin;
-        coins.Add(coinObj);
+        SpriteRenderer renderer = powerObj.AddComponent<SpriteRenderer>();
+        renderer.sprite = powerupSprites[pIndex];
+        powerups.Add(powerObj);
     }
 
     //public void CheckOverlap() --> This would be awesome to add at some point.
