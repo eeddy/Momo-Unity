@@ -14,7 +14,6 @@ public class MyoEMGRawReader : MonoBehaviour
 {
     public string IP = "127.0.0.1";
     public int port = 12345;
-    public int sendPort = 12346;
 
     // read Thread
     Thread readThread;

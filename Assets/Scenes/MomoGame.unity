@@ -1266,6 +1266,8 @@ MonoBehaviour:
   p1Spikes: {fileID: 987309647}
   p2Spikes: {fileID: 2091134891}
   gameOverScreen: {fileID: 239666079}
+  time: {fileID: 624518141}
+  winner: {fileID: 1433649973}
 --- !u!4 &815144331
 Transform:
   m_ObjectHideFlags: 0
@@ -2077,13 +2079,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1284549387}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
+      - m_Target: {fileID: 815144330}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: PlayAgain
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
