@@ -16,8 +16,8 @@ public class GameManager : MonoBehaviour
     public Text time, winner; 
 
     private float previousTime = 0;
-    private int player1Lives; 
-    private int player2Lives; 
+    public int player1Lives; 
+    public int player2Lives; 
 
     private bool p1Touching, p2Touching;
 
