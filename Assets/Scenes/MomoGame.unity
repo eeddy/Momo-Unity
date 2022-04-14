@@ -373,7 +373,6 @@ GameObject:
   - component: {fileID: 476701696}
   - component: {fileID: 476701694}
   - component: {fileID: 476701695}
-  - component: {fileID: 476701699}
   m_Layer: 0
   m_Name: Momo
   m_TagString: Untagged
@@ -509,21 +508,6 @@ Transform:
   m_Father: {fileID: 944783679}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &476701699
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 476701693}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cb0b3b269a769848b6189c3f313ab21, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
-  upwardsForce: 300
-  rb: {fileID: 476701696}
 --- !u!1 &481238086
 GameObject:
   m_ObjectHideFlags: 0
@@ -689,7 +673,6 @@ GameObject:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
-  - component: {fileID: 519420030}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -705,18 +688,6 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
---- !u!114 &519420030
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 028cc5ae844bd0645a4d7b885ab8425c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -1123,7 +1094,7 @@ GameObject:
   - component: {fileID: 712743340}
   m_Layer: 0
   m_Name: FloorManager
-  m_TagString: Floor1
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1157,7 +1128,6 @@ MonoBehaviour:
   momo: {fileID: 698971092}
   otherFloorManager: {fileID: 869169834}
   leftSide: 1
-  balancingManager: {fileID: 519420030}
   normalGround: {fileID: 21300000, guid: 1256cf9f4e60d894496bef4be4b06ddc, type: 3}
   obstacle: {fileID: 21300000, guid: 9f8e7873ebd59dd46afae05c83405e9b, type: 3}
   floorRemover: {fileID: 21300000, guid: 98051c2026929a04aa792b7182b0ea70, type: 3}
@@ -1298,8 +1268,6 @@ MonoBehaviour:
   gameOverScreen: {fileID: 239666079}
   time: {fileID: 624518141}
   winner: {fileID: 1433649973}
-  player1Lives: 0
-  player2Lives: 0
 --- !u!4 &815144331
 Transform:
   m_ObjectHideFlags: 0
@@ -1436,7 +1404,7 @@ GameObject:
   - component: {fileID: 869169834}
   m_Layer: 0
   m_Name: FloorManager
-  m_TagString: Floor2
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1470,7 +1438,6 @@ MonoBehaviour:
   momo: {fileID: 476701693}
   otherFloorManager: {fileID: 712743340}
   leftSide: 0
-  balancingManager: {fileID: 519420030}
   normalGround: {fileID: 21300000, guid: 1256cf9f4e60d894496bef4be4b06ddc, type: 3}
   obstacle: {fileID: 21300000, guid: 9f8e7873ebd59dd46afae05c83405e9b, type: 3}
   floorRemover: {fileID: 21300000, guid: 98051c2026929a04aa792b7182b0ea70, type: 3}
