@@ -7,9 +7,8 @@ public class FloorManager : MonoBehaviour
     // Public Variables
     public GameObject momo; 
     public FloorManager otherFloorManager;
-    public bool leftSide;
-
-    public BalancingManager balancingManager;
+    public bool leftSide; 
+    
     public Sprite normalGround;
     public Sprite obstacle;
     
@@ -39,9 +38,6 @@ public class FloorManager : MonoBehaviour
     private float floorIncrement = 0.1f;
     private float previousTime = 0f;
     private float previousFloorSpawn = 0f;
-
-    private float increaseSpeedVar;
-    private float slowSpeedVar;
 
     // Start is called before the first frame update
     void Start()
@@ -73,8 +69,6 @@ public class FloorManager : MonoBehaviour
         powerupSprites.Add(speedUp);
         powerupSprites.Add(speedDown);
         powerupSprites.Add(swordWalls);
-
-        
     }
 
     // Update is called once per frame
@@ -107,23 +101,6 @@ public class FloorManager : MonoBehaviour
         for(int i=0; i<powerups.Count; i++) {
             powerups[i].transform.position += new Vector3(0, floorSpeed * Time.deltaTime, 0);
         }
-
-        // upadate speed multipliers from balancingManager
-        if (gameObject.CompareTag("Floor1"))
-        {
-
-            increaseSpeedVar = (float) balancingManager.p1IncreaseSpeed;
-            slowSpeedVar = (float)balancingManager.p1SlowSpeed;
-
-
-        }
-        else if (gameObject.CompareTag("Floor2"))
-        {
-            increaseSpeedVar = (float)balancingManager.p2IncreaseSpeed;
-            slowSpeedVar = (float)balancingManager.p2SlowSpeed;
-
-        }
-
         DeleteFloors();
         DeleteObstacles();
         DeletePowerups();
@@ -149,7 +126,7 @@ public class FloorManager : MonoBehaviour
         } else if (obj.name == "IncreaseSpeed") {
             otherFloorManager.IncreaseSpeed();
         } else if (obj.name == "SlowSpeed") {
-            floorSpeed = floorSpeed * slowSpeedVar;
+            floorSpeed = floorSpeed * 0.75f;
         } else { //Sword walls
             otherFloorManager.SwordWalls();
         }
@@ -169,7 +146,7 @@ public class FloorManager : MonoBehaviour
 
     public void IncreaseSpeed() 
     {
-        floorSpeed = floorSpeed * increaseSpeedVar;
+        floorSpeed = floorSpeed * 1.25f;
     }
 
     //Called when the person dies
@@ -334,24 +311,12 @@ public class FloorManager : MonoBehaviour
     }
 
     public void CreatePowerup(float floorHeight, GameObject obs) {
-
-
-        int spawnRandom = Random.Range(0, 100);
-        Debug.Log(spawnRandom);
-        if (gameObject.CompareTag("Floor1"))
-        {
-           if (spawnRandom > balancingManager.p1SpawnTreshold)
-            { return;  }
-            
+        //One in 4 chance of coing being created
+        int powerupRandom = Random.Range(0,4);
+        // Return if not 0
+        if(powerupRandom != 0) {
+            return;
         }
-        else if(gameObject.CompareTag("Floor2"))
-        { 
-        if(spawnRandom > balancingManager.p2SpawnTreshold)
-            { return;  }
-
-        }
-
-
 
         //Power up is generated:
         float spriteWidth = floorRemover.texture.width / floorRemover.pixelsPerUnit;
